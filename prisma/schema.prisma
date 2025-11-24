@@ -1,0 +1,65 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  phoneNumber     String   @unique
+  fullName        String
+  dateOfBirth     DateTime?
+  location        String?
+  gender          String?
+  queries         Query[]
+  jaapCounts      JaapCount[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
+model Query {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  category    String
+  question    String
+  answer      String
+  location    String?
+  ipAddress   String?
+  deviceInfo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model JaapCount {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  jaapCount   Int      @default(1)
+  location    String?
+  ipAddress   String?
+  deviceInfo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+}
+
+model AdminUser {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String?
+  fullName  String?
+  role      AdminRole
+  addedBy   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
