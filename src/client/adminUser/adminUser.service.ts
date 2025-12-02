@@ -22,6 +22,12 @@ export const createAdminUserService = async (data: CreateAdminUserData) => {
 export const addAdminUserService = async (data: AddAdminUserData) => {
   const { email, role, addedBy } = data;
 
+  const existingUser = await prisma.adminUser.findUnique({ where: { email } });
+
+  if (existingUser) {
+    throw new Error('Admin user already exists');
+  }
+
   return await prisma.adminUser.create({
     data: {
       email,
@@ -34,7 +40,6 @@ export const addAdminUserService = async (data: AddAdminUserData) => {
 export const registerAdminService = async (data: RegisterAdminData) => {
   const { email, password, fullName } = data;
 
-  // Check if admin user exists and has no password set
   const existingUser = await prisma.adminUser.findUnique({ where: { email } });
 
   if (!existingUser) {
@@ -102,17 +107,11 @@ export const loginAdminService = async (data: LoginAdminData) => {
 
   const accessToken = jwt.sign(
     { userId: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || 'default_secret',
-    { expiresIn: '15m' }
+    process.env.JWT_SECRET!,
+    { expiresIn: '14d' }
   );
 
-  const refreshToken = jwt.sign(
-    { userId: user.id },
-    process.env.JWT_REFRESH_SECRET || 'default_refresh_secret',
-    { expiresIn: '7d' }
-  );
-
-  return { accessToken, refreshToken, user };
+  return { accessToken, user };
 };
 
 export const refreshAccessTokenService = async (refreshToken: string) => {

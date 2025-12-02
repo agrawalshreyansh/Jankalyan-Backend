@@ -1,37 +1,49 @@
 import type { Request, Response } from 'express';
-import { createDoubtService, getAllDoubtsService, getDoubtByIdService, addAnswerService } from './doubt.service.js';
+import { createDoubtService, getAllDoubtsService, getDoubtByIdService, addAnswerService, getDoubtsByIdsService } from './doubt.service.js';
 import { asyncHandler } from '../../utils/AsyncHandler.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 
 export const createDoubtController = asyncHandler(async (req: Request, res: Response) => {
-  const { fullName, dob, phoneNumber, gender, questionCategory, questionDescription, location } = req.body;
+  const { fullName, dateOfBirth, phoneNumber, questionCategory, questionDescription, gender } = req.body;
 
   if (!phoneNumber || !questionCategory || !questionDescription) {
     throw new ApiError(400, 'Missing required fields: phoneNumber, questionCategory, questionDescription');
   }
 
-  const result = await createDoubtService({
-    fullName,
-    dob,
-    phoneNumber,
-    gender,
-    questionCategory,
-    questionDescription,
-    location,
-    ipAddress: req.ip || null,
-    deviceInfo: req.get('User-Agent') || null,
-    requestTime: req.headers['x-timestamp'] as string,
-  });
+  try {
+    const result = await createDoubtService({
+      fullName,
+      dob : dateOfBirth,
+      phoneNumber,
+      gender ,
+      questionCategory,
+      questionDescription,
+      location : 'Rih',
+      ipAddress: req.ip || null,
+      deviceInfo: req.get('User-Agent') || null,
+      requestTime: req.headers['x-timestamp'] as string,
+    });
 
-  res.status(201).json(new ApiResponse(201, { userId: result.userId, queryId: result.queryId }, 'Question submitted successfully'));
+    res.status(201).json(new ApiResponse(201, { userId: result.userId, queryId: result.queryId }, 'Question submitted successfully'));
+  } catch (error) {
+    throw new ApiError(500, 'Failed to create doubt');
+  }
 });
 
 export const getAllDoubtsController = asyncHandler(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
+  const { date, status, category } = req.query;
 
-  const result = await getAllDoubtsService(page, limit);
+  const filters = {
+    date: date as string | undefined,
+    status: status as string | undefined,
+    category: category as string | undefined,
+  };
+  console.log('Filters:', date);
+
+  const result = await getAllDoubtsService(page, limit, filters);
 
   res.status(200).json(new ApiResponse(200, result));
 });
@@ -64,7 +76,35 @@ export const addAnswerController = asyncHandler(async (req: Request, res: Respon
     throw new ApiError(400, 'Answer is required');
   }
 
-  const doubt = await addAnswerService(id, answer);
+  try {
+    const doubt = await addAnswerService(id, answer);
 
-  res.status(200).json(new ApiResponse(200, doubt, 'Answer added successfully'));
+    res.status(200).json(new ApiResponse(200, doubt, 'Answer added successfully'));
+  } catch (error) {
+    throw new ApiError(500, 'Failed to add answer');
+  }
+});
+
+export const getDoubtsByIdsController = asyncHandler(async (req: Request, res: Response) => {
+  
+  const { userHistory: ids } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    throw new ApiError(400, 'Ids array is required and must be non-empty');
+  }
+
+  for (const item of ids) {
+    if (!item.userId || !item.queryId) {
+      throw new ApiError(400, 'Each item must have userId and queryId');
+    }
+  }
+
+
+  try {
+    const doubts = await getDoubtsByIdsService(ids);
+
+    res.status(200).json(new ApiResponse(200, doubts, 'Doubts details retrieved successfully'));
+  } catch (error) {
+    throw new ApiError(500, 'Failed to retrieve doubts details');
+  }
 });

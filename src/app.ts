@@ -2,12 +2,20 @@ import express from 'express';
 import doubtRouter from './client/doubts/doubt.route.js';
 import adminUserRouter from './client/adminUser/adminUser.route.js';
 import analyticsRouter from './client/analytics/analytics.route.js';
+import jaapRouter from './client/jaap/jaap.route.js';
 import 'dotenv/config';
 import { ApiError } from './utils/ApiError.js';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin : process.env.FRONTEND_URL!,
+  credentials: true
+}));
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Jankalyan Backend!' });
@@ -20,6 +28,7 @@ app.get('/health', (req, res) => {
 app.use('/api/v1', doubtRouter);
 app.use('/api/v1/admin', adminUserRouter);
 app.use('/api/v1/analytics', analyticsRouter);
+app.use('/api/v1/jaap', jaapRouter);
 
 // Global error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

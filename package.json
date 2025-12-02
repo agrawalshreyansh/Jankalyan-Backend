@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "node dist/index.ts",
-    "dev": "tsx src/index.ts",
+    "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,6 +21,7 @@
   "description": "",
   "type": "module",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
     "ts-node": "^10.9.2",
@@ -32,11 +33,15 @@
     "@prisma/client": "^7.0.0",
     "@prisma/extension-accelerate": "^3.0.0",
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.11",
     "prisma": "^7.0.0"
   }
 }

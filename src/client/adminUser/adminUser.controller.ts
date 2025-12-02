@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { createAdminUserService, getAllAdminUsersService, getAdminUserByIdService, addAdminUserService, registerAdminService, loginAdminService, refreshAccessTokenService } from './adminUser.service.js';
+import { createAdminUserService, getAllAdminUsersService, getAdminUserByIdService, addAdminUserService, registerAdminService, loginAdminService } from './adminUser.service.js';
 import type { CreateAdminUserData, AddAdminUserData, RegisterAdminData, LoginAdminData } from './adminUser.types.js';
 import { asyncHandler } from '../../utils/AsyncHandler.js';
 import { ApiError } from '../../utils/ApiError.js';
@@ -7,19 +7,27 @@ import { ApiResponse } from '../../utils/ApiResponse.js';
 
 
 export const addAdminUserController = asyncHandler(async (req: Request, res: Response) => {
-    const { email, role, addedBy } = req.body;
+    const { email , addedBy } = req.body;
+    console.log('Request Body:', req.body);
 
-    if (!email || !role) {
+    if (!email) {
         throw new ApiError(400, 'Missing required fields: email, role');
     }
 
-    const adminUser = await addAdminUserService({
-        email,
-        role,
-        addedBy,
-    });
+    try {
+        const adminUser = await addAdminUserService({
+            email,
+            role : 'SUPERADMIN',
+            addedBy,
+        });
 
-    res.status(201).json(new ApiResponse(201, adminUser, 'Admin permission granted successfully'));
+        res.status(201).json(new ApiResponse(201, adminUser, 'Admin permission granted successfully'));
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Admin user already exists') {
+            throw new ApiError(409, 'Admin user already exists');
+        }
+        throw error;
+    }
 });
 
 export const registerAdminController = asyncHandler(async (req: Request, res: Response) => {
@@ -29,13 +37,24 @@ export const registerAdminController = asyncHandler(async (req: Request, res: Re
         throw new ApiError(400, 'Missing required fields: email, password, fullName');
     }
 
-    const adminUser = await registerAdminService({
-        email,
-        password,
-        fullName,
-    });
+    try {
+        const adminUser = await registerAdminService({
+            email,
+            password,
+            fullName,
+        });
 
-    res.status(201).json(new ApiResponse(201, adminUser, 'Admin registered successfully'));
+        res.status(201).json(new ApiResponse(201, adminUser, 'Admin registered successfully'));
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error.message === 'Admin user not found') {
+                throw new ApiError(404, 'Admin user not found');
+            } else if (error.message === 'Admin user already registered') {
+                throw new ApiError(409, 'Admin user already registered');
+            }
+        }
+        throw error;
+    }
 });
 
 export const loginAdminController = asyncHandler(async (req: Request, res: Response) => {
@@ -45,24 +64,27 @@ export const loginAdminController = asyncHandler(async (req: Request, res: Respo
         throw new ApiError(400, 'Missing required fields: email, password');
     }
 
-    const { accessToken, refreshToken, user } = await loginAdminService({
-        email,
-        password,
-    });
+    try {
+        const { accessToken, user } = await loginAdminService({
+            email,
+            password,
+        });
 
-    res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
-    });
-
-    res.status(200).json(new ApiResponse(200, { id: user.id, email: user.email, role: user.role }, 'Login successful'));
+        res
+        .cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 14 * 24 * 60 * 60 * 1000, 
+        })
+        .status(200)
+        .json(new ApiResponse(200, { id: user.id, email: user.email, role: user.role }, 'Login successful'));
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid credentials') {
+            throw new ApiError(401, 'Invalid credentials');
+        }
+        throw error;
+    }
 });
 
 export const getAllAdminUsersController = asyncHandler(async (req: Request, res: Response) => {
@@ -90,20 +112,7 @@ export const getAdminUserByIdController = asyncHandler(async (req: Request, res:
     res.status(200).json(new ApiResponse(200, adminUser));
 });
 
-export const refreshAccessTokenController = asyncHandler(async (req: Request, res: Response) => {
-    const { refreshToken } = req.cookies;
-
-    if (!refreshToken) {
-        throw new ApiError(401, 'Refresh token is required');
-    }
-
-    const { accessToken, user } = await refreshAccessTokenService(refreshToken);
-
-    res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.status(200).json(new ApiResponse(200, { id: user.id, email: user.email, role: user.role }, 'Access token refreshed successfully'));
+export const logoutAdminController = asyncHandler(async (req: Request, res: Response) => {
+    res.clearCookie('accessToken');
+    res.status(200).json(new ApiResponse(200, null, 'Logged out successfully'));
 });
