@@ -30,8 +30,10 @@ export const updateAppSettingsService = async (data: {
   accountNumber?: string;
   videoUrl?: string;
   title?: string;
+  upiId?: string;
+  TransactionNote?: string;
 }) => {
-    console.log('Updating App Settings with data:', data);
+
   return await prisma.appSettings.upsert({
     where: { id: 'singleton' },
     update: {
@@ -47,6 +49,8 @@ export const updateAppSettingsService = async (data: {
       accountNumber: data.accountNumber || '',
       videoUrl: data.videoUrl || '',
       title: data.title || '',
+      upiId: data.upiId || '',
+      TransactionNote: data.TransactionNote || '',
     },
   });
 };

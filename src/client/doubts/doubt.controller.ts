@@ -87,15 +87,15 @@ export const addAnswerController = asyncHandler(async (req: Request, res: Respon
 
 export const getDoubtsByIdsController = asyncHandler(async (req: Request, res: Response) => {
   
-  const { ids } = req.body;
+  const { userHistory : ids } = req.body;
 
   if (!ids || !Array.isArray(ids) || ids.length === 0) {
     throw new ApiError(400, 'Ids array is required and must be non-empty');
   }
 
-  for (const id of ids) {
-    if (typeof id !== 'string') {
-      throw new ApiError(400, 'Each id must be a string');
+  for (const item of ids) {
+    if (!item.queryId || typeof item.queryId !== 'string') {
+      throw new ApiError(400, 'Each item must have a valid queryId');
     }
   }
 

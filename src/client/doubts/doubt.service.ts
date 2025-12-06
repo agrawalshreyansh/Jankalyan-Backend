@@ -101,11 +101,11 @@ export const addAnswerService = async (id: string, answer: string) => {
   });
 };
 
-export const getDoubtsByIdsService = async (ids: string[]) => {
+export const getDoubtsByIdsService = async (ids: { queryId: string }[]) => {
   const results = await Promise.all(
-    ids.map(async (id) => {
+    ids.map(async ({ queryId }) => {
       const query = await prisma.query.findUnique({
-        where: { id },
+        where: { id: queryId },
         select: {
           id: true,
           fullName: true,
