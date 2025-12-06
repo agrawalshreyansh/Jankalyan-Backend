@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/index.ts",
     "dev": "nodemon --exec tsx src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
+    "postinstall": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
