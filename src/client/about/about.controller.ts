@@ -11,7 +11,7 @@ export const getAppSettingsController = asyncHandler(async (req: Request, res: R
 });
 
 export const updateAppSettingsController = asyncHandler(async (req: Request, res: Response) => {
-  const { description, paymentQR, bankName, ifscCode, accountNumber, videoUrl, title, upiId, TransactionNote, titleHindi, descriptionHindi } = req.body;
+  const { description, paymentQR, bankName, ifscCode, accountNumber, videoUrl, title, upiId, TransactionNote, titleHindi, descriptionHindi, targetAmount, collectedAmount, totalAmount } = req.body;
 
   const updatedSettings = await updateAppSettingsService({
     description,
@@ -25,6 +25,9 @@ export const updateAppSettingsController = asyncHandler(async (req: Request, res
     TransactionNote,
     titleHindi,
     descriptionHindi,
+    targetAmount: targetAmount !== undefined ? parseFloat(targetAmount) : null,
+    collectedAmount: collectedAmount !== undefined ? parseFloat(collectedAmount) : null,
+    totalAmount: totalAmount !== undefined ? parseFloat(totalAmount) : null,
   });
 
   res.status(200).json(new ApiResponse(200, updatedSettings, 'App settings updated successfully'));

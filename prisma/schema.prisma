@@ -31,12 +31,12 @@ model JaapCount {
   location   String?
   ipAddress  String?
   deviceInfo String?
-  phone      String?
-  name       String?
-  city       String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   deviceId   String   @unique
+  city       String?
+  name       String?
+  phone      String?
 }
 
 model AppSettings {
@@ -54,6 +54,9 @@ model AppSettings {
   upiId            String?
   descriptionHindi String?
   titleHindi       String?
+  targetAmount     Float?
+  collectedAmount  Float?
+  totalAmount      Float?
 }
 
 model AdminUser {

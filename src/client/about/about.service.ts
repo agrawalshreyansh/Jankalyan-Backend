@@ -21,6 +21,9 @@ export const getAppSettingsService = async () => {
         TransactionNote: '',
         titleHindi: '',
         descriptionHindi: '',
+        targetAmount: 0,
+        collectedAmount: 0,
+        totalAmount: 0,
       },
     });
   }
@@ -40,6 +43,9 @@ export const updateAppSettingsService = async (data: {
   TransactionNote?: string;
   titleHindi?: string;
   descriptionHindi?: string;
+  targetAmount?: number | null;
+  collectedAmount?: number | null;
+  totalAmount?: number | null;
 }) => {
 
   return await prisma.appSettings.upsert({
@@ -61,6 +67,9 @@ export const updateAppSettingsService = async (data: {
       TransactionNote: data.TransactionNote || '',
       titleHindi: data.titleHindi || '',
       descriptionHindi: data.descriptionHindi || '',
+      targetAmount: data.targetAmount ?? 0,
+      collectedAmount: data.collectedAmount ?? 0,
+      totalAmount: data.totalAmount ?? 0,
     },
   });
 };

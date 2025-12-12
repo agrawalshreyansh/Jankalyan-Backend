@@ -32,6 +32,9 @@ CREATE TABLE "JaapCount" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deviceId" TEXT NOT NULL,
+    "city" TEXT,
+    "name" TEXT,
+    "phone" TEXT,
 
     CONSTRAINT "JaapCount_pkey" PRIMARY KEY ("id")
 );

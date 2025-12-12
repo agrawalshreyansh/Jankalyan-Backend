@@ -106,7 +106,6 @@ export const addAnswerService = async (id: string, answer: string) => {
 };
 
 export const getDoubtsByIdsService = async (ids :string[]) => {
-  console.log('Fetching doubts for IDs:', ids);
   const results = await prisma.query.findMany({
     where: { id: { in: ids } },
     select: {
