@@ -1,11 +1,15 @@
-import { create } from 'domain';
 import prisma from '../../lib/prisma.js';
 
-export const increaseJaapCountService = async (deviceId: string, location?: string, ipAddress?: string, deviceInfo?: string, requestTime? : string) => {
+export const increaseJaapCountService = async (identifier: string, isPhone: boolean, deviceId: string, name?: string, city?: string, location?: string, ipAddress?: string, deviceInfo?: string, requestTime? : string) => {
 
-    console.log('Increasing Jaap Count for Device ID:', deviceId, location, ipAddress, deviceInfo, requestTime);
-  const existing = await prisma.jaapCount.findUnique({
-    where: { deviceId },
+  const whereClause = isPhone ? { phone: identifier } : { deviceId: identifier };
+  const existing = await prisma.jaapCount.findFirst({
+    where: {
+      OR: [
+        { phone: identifier },
+        { deviceId: identifier }
+      ]
+    },
   });
 
   if (existing) {
@@ -13,12 +17,14 @@ export const increaseJaapCountService = async (deviceId: string, location?: stri
       jaapCount: { increment: 1 },
       updatedAt: requestTime,
     };
+    if (name !== undefined) updateData.name = name;
+    if (city !== undefined) updateData.city = city;
     if (location !== undefined) updateData.location = location || null;
     if (ipAddress !== undefined) updateData.ipAddress = ipAddress;
     if (deviceInfo !== undefined) updateData.deviceInfo = deviceInfo;
 
     return await prisma.jaapCount.update({
-      where: { deviceId },
+      where: { id: existing.id },
       data: updateData,
     });
   } else {
@@ -28,6 +34,11 @@ export const increaseJaapCountService = async (deviceId: string, location?: stri
       createdAt: requestTime,
       updatedAt: requestTime,
     };
+    if (isPhone) {
+      createData.phone = identifier;
+    }
+    if (name !== undefined) createData.name = name;
+    if (city !== undefined) createData.city = city;
     if (location !== undefined) createData.location = location || null;
     if (ipAddress !== undefined) createData.ipAddress = ipAddress;
     if (deviceInfo !== undefined) createData.deviceInfo = deviceInfo;

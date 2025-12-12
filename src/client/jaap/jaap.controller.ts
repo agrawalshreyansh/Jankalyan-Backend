@@ -4,18 +4,25 @@ import { asyncHandler } from '../../utils/AsyncHandler.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 
 export const increaseJaapCountController = asyncHandler(async (req: Request, res: Response) => {
-  const { deviceID } = req.params;
+  const deviceId = req.params.deviceId as string;
 
-  console.log('Device ID:', deviceID);
+  const { name, phone, city } = req.body;
 
-  if (!deviceID) {
-    throw new Error('Device ID is required');
+  const identifier = phone || deviceId;
+  const isPhone = !!phone;
+
+  if (!identifier) {
+    throw new Error('Phone or Device ID is required');
   }
 
-    const requestTime = req.headers['x-timestamp'] as string
+  const requestTime = req.headers['x-timestamp'] as string
 
   const result = await increaseJaapCountService(
-    deviceID,
+    identifier,
+    isPhone,
+    deviceId,
+    name || undefined,
+    city || undefined,
     req.body.location || undefined,
     req.ip || undefined,
     req.get('User-Agent') || undefined,
