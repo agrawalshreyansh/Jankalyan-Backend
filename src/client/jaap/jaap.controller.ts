@@ -34,16 +34,16 @@ export const increaseJaapCountController = asyncHandler(async (req: Request, res
 
 export const getJaapImages = asyncHandler(async (req: Request, res: Response) => {
     const images = [
-    { id: 'radha', label: 'Radha Krishna', source: { uri: 'https://play-lh.googleusercontent.com/5EMx0bKVFP8BA2u5Jy1VOZlA28Hdpo7okVbjXXrDx3uDLQCVeoaaWdLEL1CSTqKojw' } },
-    { id: 'shiv', label: 'Shiv', source: { uri: 'https://www.stickitup.xyz/cdn/shop/files/2_a3d7a4d1-f641-4308-aab5-1ff1848d5961.jpg?v=1741858114&width=1000' } },
-    { id: 'ram', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } },
-    { id: 'ram2', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } },
-    { id: 'radha2', label: 'Radha Krishna', source: { uri: 'https://play-lh.googleusercontent.com/5EMx0bKVFP8BA2u5Jy1VOZlA28Hdpo7okVbjXXrDx3uDLQCVeoaaWdLEL1CSTqKojw' } },
-    { id: 'shiv2', label: 'Shiv', source: { uri: 'https://www.stickitup.xyz/cdn/shop/files/2_a3d7a4d1-f641-4308-aab5-1ff1848d5961.jpg?v=1741858114&width=1000' } },
-    { id: 'ram3', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } },
-    { id: 'ram4', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } },
-    { id: 'ram7', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } },
-    { id: 'ram8', label: 'Ram', source: { uri: 'https://www.shutterstock.com/shutterstock/photos/2404319055/display_1500/stock-vector-ram-ram-in-hindi-praising-lord-ram-hindi-calligraphy-typography-hindu-greeting-jai-shree-ram-2404319055.jpg' } }
+    { id: 'radha', label: 'Radha Krishna', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067240/1_ylkbnu.png' } },
+    { id: 'shiv', label: 'Shiv', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067240/3_xo4urq.png' } },
+    { id: 'ram', label: 'Ram', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067241/5_jztgux.png' } },
+    { id: 'ram2', label: 'Ram', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067241/8_jdkzkw.png' } },
+    { id: 'radha2', label: 'Radha Krishna', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067240/4_w6bbbs.png' } },
+    { id: 'shiv2', label: 'Shiv', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067242/7_cfia5l.png' } },
+    { id: 'ram3', label: 'Ram', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067241/6_bxn8te.png' } },
+    { id: 'ram4', label: 'Ram', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067240/2_zgwgcf.png' } },
+    { id: 'ram7', label: 'Ram', source: { uri: 'https://res.cloudinary.com/dybtwwjvi/image/upload/v1766067243/9_lnp1wo.png' } },
+    { id: 'ram8', label: 'Ram', source: { uri: '' } }
   ];
     res.status(200).json(new ApiResponse(200, images, 'Jaap images retrieved successfully'));
 }); 
